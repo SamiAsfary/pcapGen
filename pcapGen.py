@@ -62,7 +62,7 @@ def pcapEthernetII(srcMAC,dstMAC):
 def pcapIPv4(srcIP, dstIP):
     lengthHeader = 5
     lengthData = lengthHeader*4 #suppose 0 options
-    data = b''
+    data = pcapUDP(mySrcPort,myDstPort)
     lengthData += len(data) #suppose 0 data
     frame = b''
     octetBuffer = b'\x40'
@@ -79,6 +79,16 @@ def pcapIPv4(srcIP, dstIP):
     frame += checksumIP(frame + b'\x00\x00' + frameAddr)
     frame += frameAddr
     frame += data
+    return frame
+
+def pcapUDP(srcPort,dstPort):
+    frame = b''
+    frame += srcPort
+    frame += dstPort
+    data = b''
+    frame += (len(data)+4).to_bytes(2, byteorder = 'big')
+    crc = b'\x00\x00'
+    frame += crc
     return frame
 
 with open(STDOUT, "wb") as f:
